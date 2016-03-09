@@ -1,0 +1,125 @@
+<html>
+   <head>
+      <meta charset="utf-8" />
+      <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+      <title>Demo WebApp using DeployR</title>
+   </head>
+   <body>
+      <!DOCTYPE html>
+      <html lang="en">
+         <head>
+            <meta charset="utf-8">
+            <title>Examples: Simple Script execution</title>
+            <link rel="stylesheet" href="bootstrap-combined.min.css">
+            <link rel="stylesheet" href="main.css">
+            <link rel="stylesheet" href="prettify-min.css">
+		</head>
+         <body>
+            <div class="container">
+               <div class="row-fluid">
+                  <div class="page-header">
+                     <div class="muted pull-right">
+                     </div>
+                     <h1>Examples: Simple Script Execution - Data Plots</h1>
+                  </div>
+               </div>
+               <div id= "doc" class="row-fluid">
+                  <div class="span9">
+                     <div class="revo-content">
+                        <!-- custom styles for this example -->
+                        <style>  
+                           #results-canvas .bd{
+                           height: 300px;      
+                           }
+                           #input-canvas input {
+                           margin-top: -10px;
+                           }
+                        </style>
+                        <div class="well">
+                           <p>
+                              This sample runs an R script called <code>
+                              dataPlots</code>. The script plots a simple Line Graph and a Histogram of Random Values to demonstrate
+                              the ability to produce and display more than one plot only.
+                           </p>
+                           <p>
+                              This sample demonstrates a use of DeployR's JavaScript UI utilities (deployR)
+                              interacting with the DeployR's RESTful API interface to R. The R script <code>
+                              dataPlots</code> was created and stored in the DeployR management 
+                              console.
+                           </p>
+                        </div>
+                        <div class="example">
+                           <div id="example-canvas">
+                              <div id="input-canvas" class="span6">
+                                 <p id="demo-one" align="center"> </p>
+                                 <p id="demo-two" align="center"> </p>
+                              </div>
+                           </div>
+                        </div>
+                        <h3 id="r-script">R Script</h3>
+                        <p>
+                           The R script <code>dataPlots</code> is defined below:
+                        </p>
+                        <pre class="code prettyprint">#linegraph
+#create x and y vectors to plot
+x&lt;- c(1, 2, 3, 4, 5, 6, 7, 8, 9, 10)
+y&lt;- c(2.5, 5, 7.0, 8.5, 10, 12.1, 15.2, 18, 19, 23)
+
+
+#write the plot to a file called "plot.png"
+png(&quot;plot.png&quot;)
+plot(x, y, type=&quot;o&quot;, lwd = 2, xlim = c(1, 10), ylim = c(1, 30), col=&quot;blue&quot;, xlab=&quot;X-Axis&quot;, ylab=&quot;Y-Axis&quot;, main=&quot;Line Graph&quot;)
+dev.off()
+
+
+#histogram with random values
+#write the histogram to a file called "histogram.png"
+png(&quot;histogram.png&quot;)
+hist(y, main="Histogram of Random Values&quot;, xlab=&quot;Random Values&quot;)
+dev.off()</pre>
+                     </div>
+                  </div>
+               </div>
+               <!-- /row-fluid -->
+               <hr>
+            </div>
+            <!--/.fluid-container-->
+            <script src="prettify-min.js"></script>
+            <script>prettyPrint();</script>
+            <script src="deployr.js"></script>
+            <script src="require.js"></script>
+            <script src="http://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>		
+            <script>
+               /*
+                 * Run example.
+                 */
+                 function run(config) {
+                  	deployr.configure( { 
+                  		logging: false, 
+                  		host: config.endpoint, 
+                  		cors: config.cors 
+                  	});
+
+
+                  	deployr.io('/r/repository/script/execute')
+                  	  .data({author: 'cathal', directory: 'root', filename: 'dataPlots.R'})
+                  	  .end(function(res) {
+                  		  //
+                  		  // 3. Retrieve the analytics Web service execution results.
+                  		  //
+                  		  var exec = res.get('execution');
+                  		  var workspace = res.get('workspace');
+                  		  var console = exec.console;
+                  		  var plots = exec.results;
+                 		  var files = exec.artifacts;
+                  		  var objects = workspace.objects;
+                  		  document.getElementById("demo-one").innerHTML ='<img alt="plot" src="' + files[1].url + '" width="400">'; 
+                  		  document.getElementById("demo-two").innerHTML ='<img alt="plot" src="' + files[0].url + '" width="400">'; 
+                  		 
+                  	});  
+                   }
+                 // -- load configuration and run example --
+                 $.getJSON('config.json').done(function(config) { run(config); });      
+            </script>
+         </body>
+      </html>
