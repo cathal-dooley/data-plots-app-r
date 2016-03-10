@@ -60,12 +60,12 @@
                         <p>
                            The R script <code>dataPlots</code> is defined below:
                         </p>
-                        <pre class="code prettyprint">#linegraph
+                        <pre class="code prettyprint">
 #create x and y vectors to plot
 x&lt;- c(1, 2, 3, 4, 5, 6, 7, 8, 9, 10)
 y&lt;- c(2.5, 5, 7.0, 8.5, 10, 12.1, 15.2, 18, 19, 23)
 
-
+#linegraph
 #write the plot to a file called "plot.png"
 png(&quot;plot.png&quot;)
 plot(x, y, type=&quot;o&quot;, lwd = 2, xlim = c(1, 10), ylim = c(1, 30), col=&quot;blue&quot;, xlab=&quot;X-Axis&quot;, ylab=&quot;Y-Axis&quot;, main=&quot;Line Graph&quot;)
